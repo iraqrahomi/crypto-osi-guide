@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="author" content="عبدالرحمن الدليمي (رحومي البراهيم)">
+<title>دليل الطالب: التشفير وبنية أمان OSI</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f1;--card:#fff;--ink:#12263a;--mut:#5a6b7b;--line:#cfdad6;--pri:#0f766e;--pri2:#d5efea;--warn:#b4380f;--warn2:#fbe3d9;--ok:#2f7d32;--ok2:#dff1e0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a24;--card:#16283a;--ink:#e6eef5;--mut:#9fb2c3;--line:#2a4156;--pri:#4fd1c0;--pri2:#123c3a;--warn:#ff9a72;--warn2:#46241a;--ok:#7bd37f;--ok2:#1b3a1e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1a24;--card:#16283a;--ink:#e6eef5;--mut:#9fb2c3;--line:#2a4156;--pri:#4fd1c0;--pri2:#123c3a;--warn:#ff9a72;--warn2:#46241a;--ok:#7bd37f;--ok2:#1b3a1e;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.8 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif}
+header{padding:28px 18px 8px;max-width:900px;margin:auto}
+h1{font-size:26px;line-height:1.4;margin:0 0 6px}
+header p{margin:0;color:var(--mut)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+nav div{display:flex;gap:6px;overflow-x:auto;max-width:900px;margin:auto;padding:10px 18px}
+nav button{flex:none;font:inherit;font-size:15px;padding:7px 14px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);cursor:pointer}
+nav button[aria-selected=true]{background:var(--pri);color:#fff;border-color:var(--pri)}
+@media (prefers-color-scheme:dark){nav button[aria-selected=true]{color:#06211f}}
+main{max-width:900px;margin:auto;padding:16px 18px 60px}
+section{display:none}section.on{display:block}
+h2{font-size:21px;margin:8px 0 12px}h3{font-size:17px;margin:18px 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tag{display:inline-block;font-size:13px;padding:1px 10px;border-radius:12px;background:var(--pri2);color:var(--pri);font-weight:500}
+.tag.w{background:var(--warn2);color:var(--warn)}
+label{display:block;font-size:14px;color:var(--mut);margin:8px 0 2px}
+input,select,textarea{font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+input[type=range]{padding:0}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 130px}
+.btn{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--pri);background:var(--pri);color:#fff;cursor:pointer}
+@media (prefers-color-scheme:dark){.btn{color:#06211f}}
+.btn.o{background:transparent;color:var(--pri)}
+.out{font:600 20px/1.6 ui-monospace,Menlo,Consolas,monospace;letter-spacing:2px;direction:ltr;text-align:left;background:var(--pri2);color:var(--pri);border-radius:8px;padding:10px 12px;word-break:break-all;min-height:48px}
+.ltr{direction:ltr;text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+.wheel{direction:ltr;overflow-x:auto;padding:4px 0}
+.wheel div{display:flex;gap:2px;width:max-content}
+.wheel span{width:24px;height:28px;display:grid;place-items:center;font:600 13px ui-monospace,Menlo,monospace;border-radius:4px;background:var(--bg);border:1px solid var(--line)}
+.wheel .c span{background:var(--pri);color:#fff;border-color:var(--pri)}
+@media (prefers-color-scheme:dark){.wheel .c span{color:#06211f}}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:right;vertical-align:top}th{background:var(--pri2);color:var(--pri)}
+.scroll{overflow-x:auto}
+svg text{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+.pill{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.pill button{font:inherit;font-size:14px;padding:5px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.pill button.on{border-color:var(--pri);background:var(--pri2);color:var(--pri);font-weight:700}
+.pill button.p.on{border-color:var(--warn);background:var(--warn2);color:var(--warn)}
+#pk{animation:none}
+@keyframes mv{0%{transform:translateX(0)}100%{transform:translateX(150px)}}
+.go #pk{animation:mv 1.6s ease-in-out 2}
+.opt{display:block;width:100%;text-align:right;font:inherit;margin:6px 0;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.opt.r{background:var(--ok2);border-color:var(--ok)}.opt.x{background:var(--warn2);border-color:var(--warn)}
+.fc{cursor:pointer;min-height:110px;display:grid;place-items:center;text-align:center}
+.must li{margin:5px 0}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.go #pk{animation:none}}
+.term{font:inherit;color:var(--pri);background:none;border:0;border-bottom:2px dotted var(--pri);padding:0;cursor:pointer}
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end}
+#sheet[hidden]{display:none}
+#sbx{background:var(--card);width:100%;max-width:700px;margin:auto;max-height:82vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border:1px solid var(--line)}
+#sbx h3{margin:0 0 6px;font-size:20px}
+.bx{border-radius:8px;padding:9px 12px;margin:8px 0}.bx.s{background:var(--pri2)}.bx.e{background:var(--warn2)}
+.bx b{display:block;font-size:14px}
+.bl{max-height:190px;overflow:auto}
+</style>
+</head>
+<body>
+<header>
+<h1>دليل الطالب: التشفير وبنية أمان OSI</h1>
+<p style="font-weight:500;color:var(--pri)">إعداد وتصميم: عبدالرحمن الدليمي (رحومي البراهيم)</p>
+<p>تعلّم بالتجربة: شفّر وفكّ، شاهد الهجمات، ثم اختبر نفسك.</p>
+<p style="margin-top:6px"><b>اضغط أي كلمة بخط منقّط</b> لتشرحها لك ببساطة مع مثال وتجربة.</p>
+</header>
+<nav><div role="tablist">
+<button role="tab" data-t="home" aria-selected="true">الأساسيات</button>
+<button role="tab" data-t="lab">مختبر الشيفرات</button>
+<button role="tab" data-t="att">الهجمات</button>
+<button role="tab" data-t="srv">الخدمات والآليات</button>
+<button role="tab" data-t="exam">للامتحان</button>
+</div></nav>
+<main>
+
+<section id="home" class="on">
+<h2>الصورة العامة</h2>
+<div class="card">
+<svg viewBox="0 0 640 130" width="100%" role="img" aria-label="مخطط التشفير المتماثل">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6" color="#0f766e">
+<rect x="20" y="40" width="110" height="50" rx="8" fill="var(--card)"/><rect x="265" y="40" width="110" height="50" rx="8" fill="var(--pri2)"/><rect x="510" y="40" width="110" height="50" rx="8" fill="var(--card)"/>
+<line x1="130" y1="65" x2="262" y2="65" marker-end="url(#ar)"/><line x1="375" y1="65" x2="507" y2="65" marker-end="url(#ar)"/>
+<line x1="320" y1="8" x2="320" y2="38" marker-end="url(#ar)"/>
+</g>
+<g fill="var(--ink)" font-size="15" text-anchor="middle">
+<text x="75" y="70">Plaintext</text><text x="320" y="70">Cipher + Key</text><text x="565" y="70">Ciphertext</text>
+<text x="320" y="22" dx="60" fill="var(--pri)">المفتاح السري</text>
+<text x="196" y="55" font-size="12">تشفير</text><text x="441" y="55" font-size="12">إرسال</text>
+</g></svg>
+<p style="margin:4px 0 0;color:var(--mut)">الأمان يعتمد على شيئين فقط: <b>قوة الخوارزمية</b> و<b>سرية المفتاح</b>.</p>
+</div>
+<div class="grid">
+<div class="card"><span class="tag">Cryptography</span><p>علم بناء أنظمة التشفير.</p></div>
+<div class="card"><span class="tag w">Cryptanalysis</span><p>علم كسر أنظمة التشفير.</p></div>
+<div class="card"><span class="tag">Cryptology</span><p>الاثنان معاً.</p></div>
+<div class="card"><span class="tag">Steganography</span><p>إخفاء <b>وجود</b> الرسالة داخل صورة أو ملف، بينما التشفير يخفي <b>معناها</b>.</p></div>
+</div>
+<h3>ثلاثة أبعاد لتصنيف الشيفرات</h3>
+<div class="scroll"><table>
+<tr><th>البعد</th><th>الخيار الأول</th><th>الخيار الثاني</th></tr>
+<tr><td>نوع العملية</td><td>Substitution: استبدال العناصر</td><td>Transposition: إعادة ترتيبها</td></tr>
+<tr><td>عدد المفاتيح</td><td>Symmetric: مفتاح واحد (DES, 3DES)</td><td>Asymmetric: مفتاحان (RSA, ElGamal)</td></tr>
+<tr><td>طريقة المعالجة</td><td>Block: كتلة بكتلة</td><td>Stream: عنصر بعنصر</td></tr>
+</table></div>
+<h3>الهجوم على التشفير</h3>
+<ul><li><b>Cryptanalysis:</b> يستغل نقاط ضعف الخوارزمية. إن كُشف المفتاح انكشفت كل الرسائل السابقة واللاحقة.</li>
+<li><b>Brute-force:</b> تجربة كل المفاتيح، ويلزم في المتوسط تجربة <b>نصفها</b>.</li></ul>
+</section>
+
+<section id="lab">
+<h2>مختبر الشيفرات</h2>
+<div class="card">
+<div class="row">
+<div><label for="ct">الشيفرة</label><select id="ct">
+<option value="caesar">Caesar</option><option value="mult">Multiplicative</option><option value="affine">Affine</option><option value="vig">Vigenère</option><option value="auto">Autokey</option></select></div>
+<div><label for="md">العملية</label><select id="md"><option value="e">تشفير</option><option value="d">فك التشفير</option></select></div>
+</div>
+<label for="tx">النص (أحرف إنجليزية)</label><input id="tx" class="ltr" value="THIS IS A SECRET" autocomplete="off">
+<div class="row" id="keys"></div>
+<p id="formula" class="ltr" style="margin:10px 0 4px;color:var(--mut)"></p>
+<div class="out" id="out" aria-live="polite"></div>
+<div id="wheelbox"></div>
+</div>
+<div class="card"><b>خطوات أول 5 أحرف</b><div class="scroll"><table class="ltr" id="steps"></table></div></div>
+<div class="card" id="hint"></div>
+</section>
+
+<section id="att">
+<h2>الهجمات الأمنية</h2>
+<p style="color:var(--mut)">اختر هجوماً لترى ما يفعله المهاجم في قناة الاتصال.</p>
+<div class="pill" id="apick"></div>
+<div class="card" id="adia">
+<svg viewBox="0 0 360 190" width="100%" role="img" aria-label="رسم الهجوم">
+<g stroke="currentColor" fill="var(--card)" stroke-width="1.5" color="#0f766e"><rect x="12" y="110" width="80" height="44" rx="8"/><rect x="268" y="110" width="80" height="44" rx="8"/></g>
+<g font-size="14" text-anchor="middle" fill="var(--ink)"><text x="52" y="137">المرسل</text><text x="308" y="137">المستقبل</text></g>
+<line x1="92" y1="132" x2="268" y2="132" stroke="var(--mut)" stroke-width="2" stroke-dasharray="5 4"/>
+<g id="pk"><rect x="96" y="123" width="22" height="18" rx="3" fill="var(--pri)"/></g>
+<line id="al" x1="180" y1="132" x2="180" y2="62" stroke="var(--warn)" stroke-width="2"/>
+<rect id="ab" x="130" y="22" width="100" height="40" rx="8" fill="var(--warn2)" stroke="var(--warn)" stroke-width="1.5"/>
+<text id="at" x="180" y="40" font-size="13" text-anchor="middle" fill="var(--warn)" font-weight="700">المهاجم</text>
+<text id="as" x="180" y="56" font-size="11" text-anchor="middle" fill="var(--warn)"></text>
+</svg>
+<div><span class="tag" id="atype"></span> <b id="aname"></b></div>
+<p id="adesc" style="margin:6px 0"></p>
+<p id="adef" style="margin:0;color:var(--mut)"></p><p style="margin:10px 0 0"><button class="btn o" id="aex">اشرح بمثال من الحياة</button></p>
+</div>
+<div class="scroll"><table>
+<tr><th></th><th>Passive سلبي</th><th>Active نشط</th></tr>
+<tr><td>الهدف</td><td>قراءة ومراقبة</td><td>تعديل أو تعطيل</td></tr>
+<tr><td>يغيّر البيانات؟</td><td>لا</td><td>نعم</td></tr>
+<tr><td>الاكتشاف</td><td>صعب جداً</td><td>أسهل نسبياً</td></tr>
+<tr><td>الأنواع</td><td>Traffic analysis, Eavesdropping</td><td>Replay, Masquerade, DoS, DDoS</td></tr>
+</table></div>
+</section>
+
+<section id="srv">
+<h2>الخدمات والآليات</h2>
+<p style="color:var(--mut)">اضغط على خدمة لترى الآلية والهجوم الذي تواجهه.</p>
+<div class="pill" id="spick"></div>
+<div class="card" id="sbox"></div><button class="btn o" id="sex">اشرح بمثال من الحياة</button>
+<h3>آليات الأمان</h3>
+<div class="grid">
+<div class="card"><b>Encipherment</b><p>تشفير البيانات (AES, RSA, 3DES) فلا تُقرأ إن سُرقت.</p></div>
+<div class="card"><b>Traffic Padding</b><p>إرسال بيانات وهمية وقت الفراغ لإخفاء نمط الاتصال وحجمه.</p></div>
+<div class="card"><b>Routing Control</b><p>تغيير مسار الرسائل حتى لا يتتبع المهاجم مساراً ثابتاً.</p></div>
+</div>
+</section>
+
+<section id="exam">
+<h2>للامتحان</h2>
+<div class="card must"><b>قواعد لا تُنسى</b><ul>
+<li>Cryptology = Cryptography + Cryptanalysis</li>
+<li>Caesar: C = (p + k) mod 26</li>
+<li>Multiplicative: شرط المفتاح gcd(k,26)=1، والمفاتيح الصالحة: 1,3,5,7,9,11,15,17,19,21,23,25</li>
+<li>Affine: C = (p·k₁ + k₂) mod 26، وفك التشفير P = (C − k₂)·k₁⁻¹</li>
+<li>معكوس 9 في mod 26 هو 3</li>
+<li>Playfair: نفس الصف ← يمين، نفس العمود ← أسفل، مستطيل ← الزاوية المقابلة</li>
+<li>DoS من مصدر واحد، DDoS من آلاف الأجهزة المخترقة (Zombie PCs)</li>
+<li>CIA: Confidentiality, Integrity, Availability</li></ul></div>
+<h3>بطاقة مراجعة <span style="color:var(--mut);font-size:14px">(اضغط للقلب)</span></h3>
+<div class="card fc" id="fc" tabindex="0" role="button"></div>
+<div class="row"><button class="btn o" id="fprev">السابقة</button><button class="btn" id="fnext">التالية</button></div>
+<h3>اختبر نفسك</h3>
+<div class="card" id="quiz"></div>
+</section>
+</main>
+<footer style="max-width:900px;margin:auto;padding:18px 18px 36px;border-top:1px solid var(--line);color:var(--mut);font-size:14px;text-align:center">إعداد وتصميم: <b style="color:var(--ink)">عبدالرحمن الدليمي (رحومي البراهيم)</b><br>جميع الحقوق محفوظة © 2026<br>المحتوى مبني على محاضرات التشفير وبنية أمان OSI.</footer>
+<div id="sheet" hidden><div id="sbx" role="dialog" aria-modal="true" aria-labelledby="sh"></div></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ",gcd=(a,b)=>b?gcd(b,a%b):a,md=n=>((n%26)+26)%26;
+const inv=a=>{for(let i=1;i<26;i++)if(md(a*i)==1)return i;return null};
+const keyTxt=s=>s.toUpperCase().replace(/[^A-Z]/g,"");
+/* tabs */
+$$("nav button").forEach(b=>b.onclick=()=>{$$("nav button").forEach(x=>x.setAttribute("aria-selected",x==b));$$("section").forEach(s=>s.classList.toggle("on",s.id==b.dataset.t));scrollTo(0,0)});
+/* lab */
+const KEYS={caesar:[["k","المفتاح k","3",0,25]],mult:[["k","المفتاح k (فردي، ليس 13)","9",1,25]],affine:[["a","k₁ (gcd مع 26 = 1)","7",1,25],["b","k₂","2",0,25]],vig:[["w","الكلمة المفتاحية","PASCAL"]],auto:[["k","المفتاح الابتدائي k₁","12",0,25]]};
+const FORM={caesar:"C = (p + k) mod 26   |   P = (c − k) mod 26",mult:"C = (p × k) mod 26   |   P = (c × k⁻¹) mod 26",affine:"C = (p·k₁ + k₂) mod 26   |   P = (c − k₂)·k₁⁻¹ mod 26",vig:"Cᵢ = (Pᵢ + kᵢ) mod 26 ، والمفتاح يتكرر",auto:"المفتاح = k₁ ثم الـ Plaintext نفسه"};
+const HINT={caesar:"أبسط شيفرة استبدال، وفضاء مفاتيحها 25 فقط فتُكسر بـ Brute-force فوراً.",mult:"ليس كل k صالحاً: إذا كان gcd(k,26)≠1 فلا يوجد معكوس ولا يمكن فك الشيفرة.",affine:"تجمع الضرب والجمع. المفتاح زوج (k₁,k₂) وفضاء المفاتيح 12×26 = 312.",vig:"شيفرة متعددة الأبجديات: كل حرف يُزاح بحسب حرف المفتاح، فتخفي تكرار الحروف.",auto:"المفتاح يمتد بالنص الأصلي نفسه، فلا يتكرر كما في Vigenère."};
+function mkKeys(){const t=$("#ct").value;$("#keys").innerHTML=KEYS[t].map(([id,l,v,mn,mx])=>`<div><label for="k_${id}">${l}</label><input id="k_${id}" ${mn==null?'class="ltr"':`type="number" min="${mn}" max="${mx}"`} value="${v}"></div>`).join("");$$("#keys input").forEach(i=>i.oninput=run);$("#formula").textContent=FORM[t];$("#hint").innerHTML="<b>معلومة:</b> "+HINT[t];run()}
+function run(){const t=$("#ct").value,dec=$("#md").value=="d",txt=$("#tx").value.toUpperCase(),v=id=>$("#k_"+id)?.value;
+let out="",rows=[],ki=0,stream=[],err="",k,a,b,w,ib;
+if(t=="caesar"||t=="mult"||t=="auto")k=md(+v("k")||0);
+if(t=="mult"){ib=inv(k);if(gcd(k,26)!=1)err="k="+k+" غير صالح: gcd(k,26)≠1"}
+if(t=="affine"){a=md(+v("a")||0);b=md(+v("b")||0);ib=inv(a);if(gcd(a,26)!=1)err="k₁="+a+" غير صالح: gcd(k₁,26)≠1"}
+if(t=="vig"){w=keyTxt(v("w")||"");if(!w)err="اكتب كلمة مفتاحية"}
+if(err){$("#out").textContent=err;$("#steps").innerHTML="";$("#wheelbox").innerHTML="";return}
+for(const ch of txt){const p=A.indexOf(ch);if(p<0){out+=ch;continue}let r,s;
+if(t=="caesar"){r=md(dec?p-k:p+k);s=`${ch}(${p}) ${dec?"−":"+"} ${k} = ${dec?p-k:p+k} → ${md(r)}`}
+else if(t=="mult"){r=md(p*(dec?ib:k));s=`${ch}(${p}) × ${dec?ib+" (k⁻¹)":k} = ${p*(dec?ib:k)} → ${r}`}
+else if(t=="affine"){const raw=dec?(p-b)*ib:p*a+b;r=md(raw);s=dec?`(${p}−${b})×${ib} = ${raw} → ${r}`:`${p}×${a}+${b} = ${raw} → ${r}`}
+else if(t=="vig"){const kk=A.indexOf(w[ki++%w.length]);r=md(dec?p-kk:p+kk);s=`${ch}(${p}) ${dec?"−":"+"} ${w[(ki-1)%w.length]}(${kk}) → ${r}`}
+else{const kk=stream.length?stream.shift():k;r=md(dec?p-kk:p+kk);stream.push(dec?r:p);s=`${ch}(${p}) ${dec?"−":"+"} ${kk} → ${r}`}
+out+=A[r];if(rows.length<5)rows.push(`<tr><td>${s}</td><td>${A[r]}</td></tr>`)}
+$("#out").textContent=out;$("#steps").innerHTML="<tr><th>الحساب</th><th>الناتج</th></tr>"+rows.join("");
+let wb="";if(t=="caesar"||t=="mult"||t=="affine"){const sh=[...A].map((_,i)=>A[md(t=="caesar"?i+k:t=="mult"?i*k:i*a+b)]);wb=`<p style="margin:12px 0 4px;color:var(--mut)">جدول الاستبدال (الأعلى عادي، الأسفل مشفّر)</p><div class="wheel"><div>${[...A].map(c=>`<span>${c}</span>`).join("")}</div><div class="c">${sh.map(c=>`<span>${c}</span>`).join("")}</div></div>`}
+$("#wheelbox").innerHTML=wb}
+$("#ct").onchange=mkKeys;$("#md").onchange=run;$("#tx").oninput=run;mkKeys();
+/* attacks */
+const AT=[
+["Traffic Analysis","p","يراقب حجم البيانات وتوقيتها فقط دون قراءة محتواها، ويستنتج منها حالة الطوارئ أو ضعف التواصل.","الدفاع: Traffic Padding.","يقيس الحجم"],
+["Eavesdropping","p","يقرأ المحتوى الفعلي للرسائل (بيانات مالية، معلومات شخصية) دون تعديلها.","الدفاع: Encipherment (التشفير) لضمان Confidentiality.","يقرأ المحتوى"],
+["Replay","a","يسرق حزمة تسجيل دخول صحيحة ويعيد إرسالها لاحقاً. التشفير وحده لا يمنعه لأن الحزمة تُرسل كما هي.","الدفاع: Authentication مع قيم لحظية أو أرقام تسلسلية.","يعيد الحزمة"],
+["Masquerade","a","ينتحل هوية مستخدم مصرّح له بعد سرقة بيانات دخوله، دون أي اعتراض تقني للحزم.","الدفاع: Authentication قوي وAccess Control.","ينتحل هوية"],
+["DoS","a","يغرق الخادم بطلبات كثيرة من مصدر واحد حتى يعجز عن الخدمة. مصدره سهل التحديد.","الدفاع: ضمان Availability وحجب المصدر.","طلبات كثيرة"],
+["DDoS","a","طلبات من آلاف الأجهزة المخترقة (Zombie PCs) في وقت واحد، فيصعب تمييز المصدر. الضحية الأولى النظام والثانية الأجهزة.","الدفاع: تصفية الحركة وتوزيع الحمل.","آلاف المصادر"]];
+$("#apick").innerHTML=AT.map((x,i)=>`<button class="${x[1]}" data-i="${i}">${x[0]}</button>`).join("");
+function showA(i){const x=AT[i];$$("#apick button").forEach((b,j)=>b.classList.toggle("on",j==i));$("#atype").textContent=x[1]=="p"?"Passive سلبي":"Active نشط";$("#atype").className="tag"+(x[1]=="a"?" w":"");$("#aname").textContent=x[0];$("#adesc").textContent=x[2];$("#adef").textContent=x[3];$("#as").textContent=x[4];
+const d=$("#al");d.setAttribute("stroke-dasharray",x[1]=="p"?"4 3":"0");const g=$("#adia");g.classList.remove("go");void g.offsetWidth;g.classList.add("go")}
+$("#apick").onclick=e=>{const b=e.target.closest("button");if(b)showA(+b.dataset.i)};showA(1);
+/* services */
+const SV=[["Authentication","التحقق من هوية المستخدم قبل دخوله (مثل كلمة المرور).","Masquerade, Replay","كلمة مرور، رموز لحظية"],["Access Control","تحديد صلاحيات كل مستخدم (مهندس ثم مدير منتج ثم مدير تقني).","وصول غير مصرّح","صلاحيات مرتبة"],["Confidentiality","لا يقرأ البيانات إلا المرسل والمستقبل.","Eavesdropping, Traffic Analysis","Encipherment, Traffic Padding"],["Integrity","لا يعدّل البيانات طرف ثالث.","التعديل أثناء النقل","Encipherment وفحوص السلامة"],["Non-repudiation","لا ينكر المرسل الإرسال ولا المستقبل الاستلام.","الإنكار","إثباتات الإرسال والاستلام"]];
+$("#spick").innerHTML=SV.map((x,i)=>`<button data-i="${i}">${x[0]}</button>`).join("");
+function showS(i){const x=SV[i];$$("#spick button").forEach((b,j)=>b.classList.toggle("on",j==i));$("#sbox").innerHTML=`<b>${x[0]}</b><p>${x[1]}</p><div class="scroll"><table><tr><th>يواجه</th><th>آلية مناسبة</th></tr><tr><td>${x[2]}</td><td>${x[3]}</td></tr></table></div>`}
+$("#spick").onclick=e=>{const b=e.target.closest("button");if(b)showS(+b.dataset.i)};showS(0);
+/* flashcards */
+const FC=[["ما الفرق بين Cryptography وSteganography؟","التشفير يخفي المعنى، والإخفاء Steganography يخفي وجود الرسالة."],["كم مفتاحاً يجرَّب في Brute-force في المتوسط؟","نصف عدد المفاتيح الممكنة."],["ما شرط مفتاح Multiplicative؟","gcd(k,26)=1."],["شفّر THIS بـ Caesar، k=3","WKLV"],["شفّر HELLO بـ Affine (7,2)","ZEBBW"],["ما Zombie PCs؟","أجهزة مصرّح بها مخترقة تُستخدم في هجوم DDoS."],["ما الفرق بين Traffic Analysis وEavesdropping؟","الأول يراقب الحجم فقط، والثاني يقرأ المحتوى."],["ما Traffic Padding؟","إرسال بيانات وهمية وقت الفراغ لإخفاء نمط الاتصال."]];
+let fi=0,fb=false;function fcs(){$("#fc").innerHTML=fb?`<b style="color:var(--pri)">${FC[fi][1]}</b>`:`<span>${FC[fi][0]} <small style="color:var(--mut)">(${fi+1}/${FC.length})</small></span>`}
+$("#fc").onclick=()=>{fb=!fb;fcs()};$("#fc").onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();fb=!fb;fcs()}};
+$("#fnext").onclick=()=>{fi=(fi+1)%FC.length;fb=false;fcs()};$("#fprev").onclick=()=>{fi=(fi+FC.length-1)%FC.length;fb=false;fcs()};fcs();
+/* quiz */
+const Q=[["أي هجوم لا يغيّر البيانات؟",["Replay","Eavesdropping","Masquerade","DoS"],1],["أي مفتاح غير صالح في Multiplicative؟",["9","7","13","3"],2],["كيف يختلف DDoS عن DoS؟",["أبطأ","مصدره واحد","مصادره متعددة (Zombies)","لا يؤثر على الخادم"],2],["أي خدمة تمنع المرسل من إنكار الإرسال؟",["Integrity","Non-repudiation","Access Control","Confidentiality"],1],["ناتج تشفير THIS بـ Caesar مفتاح 3؟",["WKLV","VJKU","UIJT","XLMW"],0],["أي آلية تخفي حجم الاتصال؟",["Routing Control","Encipherment","Traffic Padding","Authentication"],2]];
+let qi=0,sc=0;function qs(){if(qi>=Q.length){$("#quiz").innerHTML=`<b>نتيجتك: ${sc} من ${Q.length}</b><p>${sc>=5?"ممتاز، أنت جاهز.":"راجع الأقسام وأعد المحاولة."}</p><button class="btn" id="rs">إعادة الاختبار</button>`;$("#rs").onclick=()=>{qi=0;sc=0;qs()};return}
+const q=Q[qi];$("#quiz").innerHTML=`<small style="color:var(--mut)">سؤال ${qi+1} من ${Q.length}</small><p><b>${q[0]}</b></p>`+q[1].map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join("")}
+$("#quiz").onclick=e=>{const b=e.target.closest(".opt");if(!b||b.disabled)return;const q=Q[qi],i=+b.dataset.i;$$(".opt").forEach(o=>o.disabled=true);$$(".opt")[q[2]].classList.add("r");if(i==q[2])sc++;else b.classList.add("x");setTimeout(()=>{qi++;qs()},1100)};qs();
+
+/* explainer */
+const E={
+"Plaintext":["النص الأصلي الذي تفهمه قبل تشفيره.","الرسالة HELLO قبل أن نخفيها."],
+"Ciphertext":["النص بعد التشفير، يبدو حروفاً عشوائية لمن لا يملك المفتاح.","HELLO بمفتاح 3 تصبح KHOOR."],
+"المفتاح السري":["رقم أو كلمة تتحكم في طريقة التشفير، مثل مفتاح القفل. من لا يملكه لا يفتح الرسالة.","نفس الشيفرة بمفتاح 3 ثم 5 تعطي نتيجتين مختلفتين."],
+"Cryptography":["فن كتابة الرسائل بشكل سري.","Crypt تعني سري، وGraph تعني كتابة."],
+"Cryptanalysis":["محاولة قراءة رسالة مشفرة دون معرفة المفتاح، وهو عمل المخترق.","يخمّن المحلل أن أكثر حرف تكراراً في النص هو E."],
+"Cryptology":["العلم الذي يجمع صنع الأقفال (Cryptography) وكسرها (Cryptanalysis).","Cryptology = Cryptography + Cryptanalysis."],
+"Steganography":["إخفاء وجود الرسالة نفسها، لا معناها فقط.","رسالة مخبأة داخل صورة تبدو عادية تماماً."],
+"Symmetric":["مفتاح واحد يقفل ويفتح، مثل مفتاح باب بيتك.","DES وAES وكلاهما بمفتاح مشترك بين الطرفين."],
+"Asymmetric":["مفتاحان: عام يقفل، وخاص يفتح. مثل صندوق بريد: أي شخص يضع رسالة، والمالك وحده يفتحه.","RSA وElGamal."],
+"Substitution":["استبدال كل حرف بحرف آخر مع بقاء أماكنها.","A تصبح D وB تصبح E."],
+"Transposition":["تغيير أماكن الحروف دون تغيير الحروف نفسها.","HELLO تصبح OLLEH."],
+"Block cipher":["يعالج الرسالة قطعاً ثابتة الحجم، كمن يقرأ صفحة صفحة.","DES."],
+"Stream cipher":["يعالج الرسالة حرفاً حرفاً بشكل متدفق.","LFSR."],
+"Brute-force":["تجربة كل المفاتيح الممكنة حتى تظهر جملة مفهومة، مثل تجريب كل أرقام قفل رقمي.","Caesar لها 25 مفتاحاً فقط، فتُكسر في ثوانٍ.","brute"],
+"mod 26":["الباقي بعد القسمة على 26. تخيّل ساعة فيها 26 رقماً: بعد Z نعود إلى A.","31 mod 26 = 5 لأن 31 = 1×26 + 5، والحرف رقم 5 هو F.","mod"],
+"gcd":["أكبر عدد يقسم الرقمين معاً. إذا كان 1 يكون مفتاح الضرب صالحاً.","gcd(9,26)=1 صالح. gcd(13,26)=13 غير صالح."],
+"معكوس":["الرقم الذي يلغي أثر الضرب. نحتاجه لفك الشيفرة.","9 × 3 = 27، و27 mod 26 = 1، فمعكوس 9 هو 3.","inv"],
+"Caesar":["كل حرف يتحرك k خطوة في الأبجدية.","k=3: A تصبح D، وTHIS تصبح WKLV."],
+"Multiplicative":["نضرب رقم الحرف بالمفتاح ثم نأخذ mod 26.","k=9: الحرف L رقمه 11، 11×9=99، 99 mod 26 = 21 وهو V."],
+"Affine":["نضرب ثم نجمع: C = (p·k₁ + k₂) mod 26.","k=(7,2): الحرف H رقمه 7، 7×7+2=51، 51 mod 26 = 25 وهو Z."],
+"Vigenère":["مفتاح كلمة، وكل حرف يُزاح بمقدار حرف مختلف منها.","المفتاح CAT يزيح الحرف الأول 2 والثاني 0 والثالث 19 ثم يعيد."],
+"Autokey":["المفتاح يبدأ برقم ثم يكمل بحروف الرسالة نفسها فلا يتكرر.","k₁=12 تزيح الحرف الأول، ثم الحرف الأول من الرسالة يزيح الثاني."],
+"Playfair":["تشفر زوجين من الحروف معاً باستخدام جدول 5×5.","HI تصبح BM في جدول الكلمة PLAYFAIR."],
+"Traffic Analysis":["لا يقرأ المهاجم الرسائل، بل يراقب حجمها وتوقيتها فقط.","ترى سيارات إسعاف كثيرة أمام مبنى فتعرف أن حدثاً وقع دون أن تعرف تفاصيله."],
+"Eavesdropping":["التنصت: يقرأ المهاجم محتوى الرسالة الفعلي دون تغييرها.","تسمع مكالمة غيرك من خلف الباب."],
+"Replay":["يسرق حزمة صحيحة (مثل تسجيل دخول) ويعيد إرسالها لاحقاً، فيقبلها الخادم لأنها صحيحة.","يسجّل صوتك وأنت تنطق كلمة السر، ثم يشغّله أمام الباب الصوتي."],
+"Masquerade":["انتحال شخصية: يدخل بهوية مستخدم مصرح له بعد سرقة بياناته.","شخص يرتدي زي موظف ويستخدم بطاقته المسروقة ليدخل."],
+"DoS":["رفض الخدمة: مصدر واحد يغرق الخادم بطلبات حتى يتوقف.","شخص يتصل بمطعم آلاف المرات فلا يتمكن أحد من الحجز. نعرف من هو بسهولة."],
+"DDoS":["رفض الخدمة الموزع: الطلبات تأتي من آلاف الأجهزة معاً، فلا يُعرف المهاجم الحقيقي.","ألف شخص خُدعوا فاتصلوا بالمطعم في اللحظة نفسها."],
+"Zombie PCs":["أجهزة عادية اخترقها المهاجم ليستخدمها دون علم أصحابها في هجوم DDoS.","جهازك المنزلي قد يكون منها وأنت لا تدري."],
+"Authentication":["التحقق من هوية المستخدم قبل السماح له بالدخول.","إبراز بطاقتك عند بوابة المبنى."],
+"Access Control":["تحديد ما يحق لكل مستخدم فعله بعد دخوله.","الموظف يفتح غرفته فقط والمدير يفتح غرفاً أكثر."],
+"Confidentiality":["السرية: لا يقرأ الرسالة إلا المرسل والمستقبل.","رسالة داخل ظرف مغلق."],
+"Integrity":["النزاهة: لا يعدّل أحد الرسالة أثناء الطريق دون أن يُكتشف.","ظرف مختوم بالشمع: إن فُتح يظهر ذلك."],
+"Non-repudiation":["عدم الإنكار: لا يستطيع أحد نفي أنه أرسل أو استلم.","توقيعك على استلام طرد يمنعك من إنكاره لاحقاً."],
+"Availability":["التوافر: الخدمة تعمل عندما تحتاجها.","موقع البنك يفتح وقت تريد التحويل."],
+"Encipherment":["التشفير كآلية أمان: تحويل البيانات إلى شكل لا يُفهم.","AES وRSA وTriple DES."],
+"Traffic Padding":["إرسال بيانات وهمية في أوقات الصمت حتى لا يعرف المهاجم متى يتم الاتصال فعلاً.","مطعم يرسل شاحنات فارغة كل يوم حتى لا يُعرف متى تصل البضاعة الحقيقية."],
+"Routing Control":["تغيير مسار الرسائل في الشبكة حتى لا يتتبع المهاجم طريقاً ثابتاً.","تغيّر طريقك إلى العمل كل يوم حتى لا يتبعك أحد."],
+"Passive":["هجوم سلبي: يراقب فقط ولا يغيّر شيئاً، لذلك يصعب اكتشافه.","جاسوس يصوّر دون أن يلمس شيئاً."],
+"Active":["هجوم نشط: يغيّر الرسائل أو يعطّل الخدمة، لذلك يترك أثراً.","لص يغيّر محتوى الرسالة أو يقطع الطريق."],
+"CIA":["ثلاثة أهداف للأمن: Confidentiality وIntegrity وAvailability.","سرية الرسالة، وسلامتها، وتوافر الخدمة."],
+"RSA":["أشهر شيفرة بمفتاحين (عام وخاص).","تستخدم في المواقع الآمنة."],
+"DES":["شيفرة كتلية قديمة بمفتاح واحد.","DES وتطورها 3DES."]};
+const EM={};Object.keys(E).forEach(k=>EM[k.toLowerCase()]=k);
+const RE=new RegExp("("+Object.keys(E).sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\]\\-]/g,"\\$&")).join("|")+")(?![A-Za-z])","gi");
+const SKIP="button,input,select,textarea,script,style,.out,#steps,#quiz,#fc,.term,svg,.wheel,#sheet,th,.ltr";
+function link(root){const seen=new Set(),w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;while(n=w.nextNode())if(!n.parentElement.closest(SKIP)&&n.data.trim())L.push(n);
+L.forEach(n=>{const parts=n.data.split(RE);if(parts.length<2)return;const f=document.createDocumentFragment();parts.forEach((t,i)=>{if(i%2){const k=EM[t.toLowerCase()];if(!k||seen.has(k)||/[A-Za-z]$/.test(parts[i-1])){f.append(t);return}seen.add(k);const b=document.createElement("button");b.className="term";b.dataset.e=k;b.textContent=t;f.append(b)}else if(t)f.append(t)});n.replaceWith(f)})}
+const DEMO={
+mod:'<label for="dm">اكتب أي رقم</label><input id="dm" type="number" value="31" oninput="dmx()"><div class="out" id="dr" style="margin-top:8px"></div>',
+inv:'<label for="di">اكتب مفتاحاً (1 إلى 25)</label><input id="di" type="number" value="9" oninput="dix()"><div class="out" id="dv" style="margin-top:8px"></div>',
+brute:'<label for="db">نص مشفّر بـ Caesar</label><input id="db" class="ltr" value="WKLV" oninput="dbx()"><div class="bl ltr" id="dl" style="margin-top:8px"></div><small>ابحث عن السطر الذي له معنى، وهو المفتاح الصحيح.</small>'};
+function dmx(){const n=+$("#dm").value||0,q=Math.floor(n/26),r=md(n);$("#dr").textContent=`${n} = ${q}×26 + ${r} → ${r} → ${A[r]}`}
+function dix(){const k=+$("#di").value||0,i=inv(md(k));$("#dv").textContent=gcd(md(k),26)==1&&i?`معكوس ${k} هو ${i}  (${k}×${i} = ${k*i} ≡ 1)`:`لا يوجد معكوس لـ ${k} لأن gcd ≠ 1`}
+function dbx(){const t=$("#db").value.toUpperCase();$("#dl").innerHTML=Array.from({length:26},(_,k)=>`k=${k}: ${[...t].map(c=>A.indexOf(c)<0?c:A[md(A.indexOf(c)-k)]).join("")}`).join("<br>")}
+function openE(k){const x=E[k];$("#sbx").innerHTML=`<h3 id="sh">${k}</h3><div class="bx s"><b>ببساطة</b>${x[0]}</div><div class="bx e"><b>مثال</b>${x[1]}</div>${x[2]?DEMO[x[2]]:""}<p style="margin:12px 0 0"><button class="btn" id="sc">فهمت</button></p>`;$("#sheet").hidden=false;if(x[2])({mod:dmx,inv:dix,brute:dbx})[x[2]]();$("#sc").focus();$("#sc").onclick=()=>$("#sheet").hidden=true}
+$("#sheet").onclick=e=>{if(e.target.id=="sheet")e.target.hidden=true};
+document.addEventListener("keydown",e=>{if(e.key=="Escape")$("#sheet").hidden=true});
+document.addEventListener("click",e=>{const b=e.target.closest(".term");if(b)openE(b.dataset.e)});
+let ca=1,cs=0;const _sa=showA,_ss=showS;showA=i=>{ca=i;_sa(i);link($("#adia"))};showS=i=>{cs=i;_ss(i);link($("#sbox"))};
+$("#aex").onclick=()=>openE(AT[ca][0]);$("#sex").onclick=()=>openE(SV[cs][0]);
+const _mk=mkKeys;mkKeys=()=>{_mk();link($("#hint"))};$("#ct").onchange=mkKeys;
+showA(ca);showS(cs);$$("main section").forEach(sec=>{if(sec.id!="lab")link(sec)});link($("#hint"));
+</script>
+</body>
+</html>
